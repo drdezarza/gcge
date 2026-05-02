@@ -1,0 +1,11 @@
+t,target_mode,theme,intensity,timing,claims,confidence,reasoning,n_targets,governance,n_rejected
+0,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,2
+5,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+10,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+15,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+20,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,1
+25,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+30,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,2
+35,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+40,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,3
+45,RANDOM,ECONOMIC,0.6,PERIODIC,FACTUAL,0.65,Slight intensity increase.,6,governed,2

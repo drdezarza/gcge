@@ -1,0 +1,6 @@
+param,autonomy_final,coop_final,ecs_final,integrity_final
+base_prosocial,0.36086175942549426,1.6997282608695654,1.183693050877504,0.0
+deploy_every,0.0,0.0,0.0,0.0
+n_candidates,0.0,0.0,0.0,0.0
+state_noise,0.0,0.0,0.0,0.0
+target_frac,0.16157989228007186,0.17391304347826092,0.18116645984754462,0.0

@@ -1,0 +1,18 @@
+t,target_mode,theme,intensity,timing,claims,confidence,reasoning,n_targets,governance,n_rejected
+0,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+3,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+6,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+9,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+12,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+15,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+18,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+21,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+24,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+27,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+30,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+33,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+36,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+39,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+42,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+45,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+48,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3

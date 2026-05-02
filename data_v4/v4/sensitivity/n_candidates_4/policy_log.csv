@@ -1,0 +1,11 @@
+t,target_mode,theme,intensity,timing,claims,confidence,reasoning,n_targets,governance,n_rejected
+0,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+5,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.9,"Targeting hubs in a scale-free network with a hybrid theme can effectively promote cooperation while respecting agent autonomy. A periodic timing with moderate intensity can help maintain a consistent influence without being overly intrusive, minimizing polarization and backlash risk.",6,governed,1
+10,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+15,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+20,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+25,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+30,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+35,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+40,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+45,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1

@@ -1,0 +1,11 @@
+t,target_mode,theme,intensity,timing,claims,confidence,reasoning,n_targets,governance,n_rejected
+0,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.9,"Targeting hubs in a small-world topology can efficiently spread influence, while a hybrid theme balances moral, economic, and identity appeals to minimize backlash. Periodic timing maintains a steady, predictable influence, and high confidence in factual claims supports credibility and cooperation.",6,governed,3
+5,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+10,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+15,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+20,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+25,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1
+30,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+35,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,3
+40,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,2
+45,HUBS,HYBRID,0.7,PERIODIC,FACTUAL,0.8,Slight intensity increase.,6,governed,1

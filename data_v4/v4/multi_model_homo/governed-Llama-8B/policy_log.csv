@@ -1,0 +1,11 @@
+t,target_mode,theme,intensity,timing,claims,confidence,reasoning,n_targets,governance,n_rejected
+0,HUBS,IDENTITY,0.7,PERIODIC,FACTUAL,0.9,"Targeting hubs with periodic, moderate-intensity interventions emphasizing shared identity can foster cooperation by promoting a sense of community and shared values. This approach minimizes polarization risk by avoiding confrontational or divisive themes, and reduces backlash risk by grounding claims in factual information and maintaining a moderate level of intensity.",6,governed,2
+5,RANDOM,ECONOMIC,0.1,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,3
+10,RANDOM,IDENTITY,0.1,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,3
+15,RANDOM,ECONOMIC,0.1,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,3
+20,RANDOM,ECONOMIC,0.13000000000000003,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,1
+25,HUBS,MORAL,0.35,PERIODIC,FACTUAL,0.63,Slight intensity increase.,6,governed,3
+30,HUBS,MORAL,0.44999999999999996,PERIODIC,FACTUAL,0.63,Slight intensity increase.,6,governed,2
+35,RANDOM,ECONOMIC,0.1,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,3
+40,RANDOM,MORAL,0.15,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,3
+45,RANDOM,ECONOMIC,0.1,PERIODIC,FACTUAL,0.5599999999999999,Reduced intensity for equity.,6,governed,2

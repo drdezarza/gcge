@@ -1,0 +1,35 @@
+{
+  "n_agents": 30,
+  "topo": "scale_free",
+  "steps": 50,
+  "seed": 42,
+  "base_prosocial": 0.45,
+  "prosocial_std": 0.15,
+  "resistance_mean": 0.4,
+  "resistance_std": 0.15,
+  "target_frac": 0.2,
+  "deploy_every": 5,
+  "governance_mode": "unconstrained",
+  "adversarial": true,
+  "n_candidates": 6,
+  "state_noise": 0.1,
+  "label": "unconstrained-R0.40",
+  "graph_stats": {
+    "n_nodes": 30,
+    "n_edges": 81,
+    "avg_degree": 5.4,
+    "clustering": 0.31216283716283716
+  },
+  "compiler_stats": {
+    "calls": 350,
+    "cached": 0,
+    "errors": 0,
+    "role": "compiler"
+  },
+  "agent_stats": {
+    "calls": 1029,
+    "cached": 2271,
+    "errors": 0,
+    "role": "agent"
+  }
+}
