@@ -2,18 +2,11 @@
 
 The central question: *Does constitutional governance remain effective when agents are genuinely resistant, heterogeneous, and game-theoretically rational — not just RLHF-aligned?*
 
-<<<<<<< HEAD
 - **v3** — the four core experiments that establish the GCGE framework on a single seed and a single backbone.
 - **v4** — robustness extensions: multi-seed validation with bootstrap CIs, topology robustness, OAT sensitivity, agent-temperature sweep, and homogeneous + heterogeneous cross-backbone generalisation.
 - **v5** —  ECS metric ablations (multiplicative / additive / weighted / no-integrity, plus a graded integrity-penalty sweep), rank-based effect-size geometry with bootstrap confidence intervals, and a governance-layer latency micro-benchmark. v5 reanalyses the existing five-seed v4 logs and runs no new LLM calls.
 
 The three notebooks share architecture and metric definitions; v4 reuses v3 primitives unchanged and adds the new sweep machinery on top, and v5 reads only from v4's logged outputs (so it is purely analytical and CPU-only). All three are independently runnable.
-=======
-- **v3** — the four core experiments (Sections 4.1–4.5 of the paper) that establish the GCGE framework on a single seed and a single backbone.
-- **v4** — robustness extensions (Sections 4.6–4.7 of the paper): multi-seed validation with bootstrap CIs, topology robustness, OAT sensitivity, agent-temperature sweep, and homogeneous + heterogeneous cross-backbone generalisation.
-
-The two notebooks share architecture and metric definitions; v4 reuses v3 primitives unchanged and adds the new sweep machinery on top. Both are independently runnable.
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 
 ---
 
@@ -55,7 +48,6 @@ v4.0 adds five additional sweeps on top of the v3 baseline, none of which alter 
 - **R4 — Agent-temperature sweep** over *T* ∈ {0.0, 0.2, 0.5, 0.8} verifying that observed effects are not artefacts of agent-side stochasticity.
 - **R5 — Cross-backbone generalisation**: a homogeneous sweep across five backbones (Llama-3.3-70B, Llama-3.1-8B, DeepSeek-V3, Qwen3-235B-A22B, NousResearch Hermes-4-70B) and a heterogeneous sweep that crosses Llama-70B with non-Llama agents and *vice versa*.
 
-<<<<<<< HEAD
 ### v5: Metric Ablation, Effect-Size Geometry, Latency
 
 v5.0  does not introduce any new agent or governance code, runs no model calls, and operates entirely on the per-component time series (`C`, `A`, `I`, `F`) already logged by v4. The deliverables are:
@@ -64,8 +56,6 @@ v5.0  does not introduce any new agent or governance code, runs no model calls, 
 - **Effect-size geometry.** Per-metric raw mean differences with bootstrap (5000 resample) 95 % CIs and rank-based Cliff's δ, alongside the inflated Cohen's *d* / Glass's Δ that the near-deterministic integrity gate produces. Frames the headline as a near-deterministic scoring geometry rather than a conventional behavioural effect.
 - **Latency micro-benchmark.** A direct measurement of the governance-selection code (stateless hard rules + one scalar utility, no LLM call) over 2×10⁴ calls on representative six-candidate adversarial pools: mean 0.78 µs (p99 0.88 µs), sustained throughput ≈ 1.3×10⁶ decisions/s/core, and a total filter cost of 7.8 µs for a complete 50-step deployment.
 
-=======
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 ---
 
 ## Agent Architecture
@@ -161,7 +151,6 @@ Five backbones run on both compiler and agents: `Llama-3.3-70B-Instruct`, `Llama
 #### R5-B — Cross-Backbone Heterogeneous
 Five compiler→agent pairs cross Llama-70B with each non-Llama backbone in both directions. Verifies the constitutional filter does not depend on coordinator and agent population sharing alignment priors.
 
-<<<<<<< HEAD
 ### Reviewer-response analyses (v5 — `gcge_nebius_v5.ipynb`)
 
 v5 ingests the five-seed v4 components (`components_last20.csv`) and runs three purely analytical passes. No simulations are re-executed.
@@ -175,8 +164,6 @@ Reports raw mean differences with bootstrap 95 % CIs, Cliff's δ, Cohen's *d*, a
 #### A3 — Governance-layer latency micro-benchmark
 Times the constitutional-selection code in isolation (`latency_benchmark.json`). The selector is a stateless set of hard rules plus a single scalar utility evaluation with no LLM call, so its cost is microsecond-order and dominated entirely by the surrounding LLM calls in any realistic deployment.
 
-=======
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 ---
 
 ## Repository Structure
@@ -264,7 +251,6 @@ Times the constitutional-selection code in isolation (`latency_benchmark.json`).
             ├── unconstrained-* (mirror)
             ├── hetero_backbone_summary.csv
             └── hetero_backbone_summary.png
-<<<<<<< HEAD
 │
 │   ── v5 (additional analysis layer, no new model calls) ──
 ├── gcge_nebius_v5.ipynb            # analysis notebook (A1 ablation + A2 effect sizes + A3 latency)
@@ -276,8 +262,6 @@ Times the constitutional-selection code in isolation (`latency_benchmark.json`).
     ├── effect_size_panel.csv            # A2: raw diff, bootstrap CI, Cohen's d, Glass's Δ, Cliff's δ
     ├── effect_size_panel.{png,pdf}      # A2: visual panel
     └── latency_benchmark.json           # A3: n_calls, mean/median/p95/p99 µs, throughput, full-run cost
-=======
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 ```
 
 ---
@@ -367,7 +351,6 @@ In addition to per-run directories, each v4 sweep produces aggregate CSV/PNG fil
 
 **`multi_model_hetero/hetero_backbone_summary.csv`** — one row per (compiler→agent pair × condition) for the heterogeneous sweep.
 
-<<<<<<< HEAD
 ### v5 Analysis Files
 
 The v5 notebook reads the five-seed components logged by R1 and writes its outputs into `data_v5/`. No per-run subdirectories exist — v5 produces tables and figures, not simulation traces.
@@ -386,8 +369,6 @@ The v5 notebook reads the five-seed components logged by R1 and writes its outpu
 
 **`latency_benchmark.json`** — single JSON object: `n_calls`, `mean_us`, `median_us`, `p95_us`, `p99_us`, `throughput_per_s`, and `full_run_10calls_us`. Measured on the exact governance-selection code, in isolation from the LLM pipeline.
 
-=======
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 ### Root-Level Figures (v3 only — v4 equivalents are inside their sweep directories)
 
 All figures are saved as PNG at 300 dpi.
@@ -433,11 +414,7 @@ The multiplicative form ensures that a collapse in any single component — even
 pip install openai networkx tqdm matplotlib pandas numpy scipy
 ```
 
-<<<<<<< HEAD
 `scipy` is required for the v4 notebook (bootstrap and Mann–Whitney *U*); the v3 notebook does not depend on it. v5 uses only `pandas`, `numpy`, `matplotlib`, and `scipy`, and makes no LLM calls, so an API key is not required for v5.
-=======
-`scipy` is required for the v4 notebook (bootstrap and Mann–Whitney *U*); the v3 notebook does not depend on it.
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 
 ### API Key
 
@@ -464,10 +441,7 @@ Execute all cells in order.
 
 - `gcge_nebius_v3.ipynb` runs the four core experiments sequentially from the orchestration cell. Outputs are written to `/content/outputs/paper5_v3/` (Colab) or the working directory.
 - `gcge_nebius_v4.ipynb` first re-runs Experiments 1–4 (writing to `paper5_v4/v3/`), then proceeds to R1–R5 (writing to `paper5_v4/v4/<sweep_name>/`). The v4 notebook is *additive* with respect to v3: if you only need the core experiments, run v3.
-<<<<<<< HEAD
 - `gcge_nebius_v5.ipynb` is an additional analysis layer. It reads `data_v4/v4/multi_seed/*/timeseries.csv` for the per-component last-20 averages and writes its outputs to `data_v5/`. Runs in seconds on CPU; no API key required.
-=======
->>>>>>> 199f115147485cd92fa5717c6c24734a4acb4526
 
 ---
 
