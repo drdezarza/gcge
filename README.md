@@ -4,9 +4,11 @@ The central question: *Does constitutional governance remain effective when agen
 
 - **v3** — the four core experiments that establish the GCGE framework on a single seed and a single backbone.
 - **v4** — robustness extensions: multi-seed validation with bootstrap CIs, topology robustness, OAT sensitivity, agent-temperature sweep, and homogeneous + heterogeneous cross-backbone generalisation.
-- **v5** —  ECS metric ablations (multiplicative / additive / weighted / no-integrity, plus a graded integrity-penalty sweep), rank-based effect-size geometry with bootstrap confidence intervals, and a governance-layer latency micro-benchmark. v5 reanalyses the existing five-seed v4 logs and runs no new LLM calls.
+- **v4.1** — adds an **R6 N=100 scale spot-check** to v4, replicating the governed-vs.-unconstrained comparison of Experiment 1 at three-fold larger population, with everything else held at the v4 baseline. The four core experiments and R1–R5 remain unchanged.
+- **v5** — ECS metric ablations (multiplicative / additive / weighted / no-integrity, plus a graded integrity-penalty sweep), rank-based effect-size geometry with bootstrap confidence intervals, and a governance-layer latency micro-benchmark. v5 reanalyses the existing five-seed v4 logs and runs no new LLM calls.
+- **v5.1** — adds a **constraint-threshold sensitivity sweep** and explicit **external governance baselines** (Constitutional-AI-style critique-and-revise, LlamaGuard-style safety-classifier best-of-*N*) on the same kind of synthetic adversarial pools used in the v5 latency benchmark. v5.1 also patches the ECS row of the v5 effect-size panel to use the **mean-of-products** convention (per-timestep ECS averaged over the last 20 steps) so it matches the convention used everywhere else in the paper (abstract, multi-seed table, robustness section); the other four rows are unchanged.
 
-The three notebooks share architecture and metric definitions; v4 reuses v3 primitives unchanged and adds the new sweep machinery on top, and v5 reads only from v4's logged outputs (so it is purely analytical and CPU-only). All three are independently runnable.
+The notebooks share architecture and metric definitions; v4 reuses v3 primitives unchanged and adds the new sweep machinery on top, v4.1 adds R6 on top of v4 with no change to R1–R5, v5 reads only from v4's logged outputs (so it is purely analytical and CPU-only), and v5.1 reuses v5's plumbing and adds two further pure-Python analyses on synthetic adversarial pools (no new LLM calls). All notebooks are independently runnable.
 
 ---
 
@@ -48,13 +50,27 @@ v4.0 adds five additional sweeps on top of the v3 baseline, none of which alter 
 - **R4 — Agent-temperature sweep** over *T* ∈ {0.0, 0.2, 0.5, 0.8} verifying that observed effects are not artefacts of agent-side stochasticity.
 - **R5 — Cross-backbone generalisation**: a homogeneous sweep across five backbones (Llama-3.3-70B, Llama-3.1-8B, DeepSeek-V3, Qwen3-235B-A22B, NousResearch Hermes-4-70B) and a heterogeneous sweep that crosses Llama-70B with non-Llama agents and *vice versa*.
 
+### The v4.1 Addition: Scale Spot-Check at N=100
+
+v4.1 adds a new section (R6) on top of v4:
+
+- **R6 — Scale spot-check at N=100.** A single-seed governed-vs.-unconstrained replication of Experiment 1 at three-fold larger population, with everything else held at the v4 baseline (scale-free *m*=3, 50 steps, adversarial *p*<sub>viol</sub>=0.65, seed = 42, Llama-3.3-70B-Instruct on both sides). The qualitative ordering of Experiment 1 is fully preserved at *N*=100; the ECS gap is preserved within multi-seed uncertainty, the integrity collapse of the unconstrained selector is identical, and the autonomy paradox is reproduced exactly. We treat the *N*=100 result as a single-seed existence proof of scaling rather than a full population-size sweep.
+
 ### v5: Metric Ablation, Effect-Size Geometry, Latency
 
-v5.0  does not introduce any new agent or governance code, runs no model calls, and operates entirely on the per-component time series (`C`, `A`, `I`, `F`) already logged by v4. The deliverables are:
+v5.0 does not introduce any new agent or governance code, runs no model calls, and operates entirely on the per-component time series (`C`, `A`, `I`, `F`) already logged by v4. The deliverables are:
 
 - **Metric ablation.** The headline ECS gap recomputed under four alternative scoring rules — multiplicative `C·A·I·F`, additive `¼(C+A+I+F)`, weighted-additive `0.40·C + 0.20·A + 0.30·I + 0.10·F`, and integrity-removed `C·A·F` — plus a continuous sweep in which MISLEADING claims are softened from `I=0` to `I=δ` for δ ∈ {0.0, 0.1, 0.2, 0.3, 0.5}. The governed–unconstrained advantage is preserved under additive and weighted forms and decays smoothly but stays positive across the graded sweep; it vanishes only when integrity is dropped entirely. The governed–naive gap is formulation-invariant (≈ −0.004), quantitatively confirming that the hard-constraint floor is the load-bearing component of the framework.
 - **Effect-size geometry.** Per-metric raw mean differences with bootstrap (5000 resample) 95 % CIs and rank-based Cliff's δ, alongside the inflated Cohen's *d* / Glass's Δ that the near-deterministic integrity gate produces. Frames the headline as a near-deterministic scoring geometry rather than a conventional behavioural effect.
 - **Latency micro-benchmark.** A direct measurement of the governance-selection code (stateless hard rules + one scalar utility, no LLM call) over 2×10⁴ calls on representative six-candidate adversarial pools: mean 0.78 µs (p99 0.88 µs), sustained throughput ≈ 1.3×10⁶ decisions/s/core, and a total filter cost of 7.8 µs for a complete 50-step deployment.
+
+### The v5.1 Addition: Threshold Sweep, External Baselines, and ECS Aggregation Fix
+
+v5.1 adds two further analyses on top of v5 and a small numerical fix to the v5 ECS effect-size row. None of the v5 outputs (ablation panel, latency micro-benchmark, four non-ECS rows of the effect-size panel) change.
+
+- **E — Constraint-threshold sensitivity sweep.** Sweeps the intensity ceiling τ ∈ {0.60, 0.65, …, 0.95} on 2000 synthetic adversarial pools, holding the claims and theme gates fixed, and records candidate rejection rate, selected-policy integrity, selected intensity, and selected manipulation risk. Selected-policy integrity is identically 1.000 and the MISLEADING pass-through rate is identically 0% across the entire sweep; τ controls only the rejection rate (decaying smoothly from 79.8% at τ=0.60 to 26.3% at τ=0.95) and the magnitude of the selected policy's intensity. This closes the question of whether the τ=0.80 operating point used elsewhere is a defensible plateau or a fragile calibration.
+- **F — External governance baselines.** Two further governance architectures are reimplemented as deterministic rule-based proxies of their LLM counterparts and run on the same 2000-pool synthetic adversarial workload: a Constitutional-AI-style critique-and-revise loop and a safety-classifier best-of-*N* (LlamaGuard-style) rejection-sampling baseline. All four governance-enabled selectors (governed, naive, critique-revise, safety-classifier) hit the integrity floor of 1.000 and admit 0% MISLEADING claims; they separate cleanly on **secondary** safety dimensions (manipulation risk, BURST timing). The contribution of the GCGE soft scorer is, accordingly, not a marginal gain on the integrity primary — the hard floor saturates that — but a substantial gain on the secondary operational risk surface, which other floor-achieving architectures leave unaddressed.
+- **ECS aggregation fix (mean-of-products).** The v5 effect-size panel computed per-seed ECS by multiplying the last-20 means of each component (`mean(C)·mean(A)·mean(I)·mean(F)`). The rest of the paper computes per-seed ECS as the last-20 mean of the per-timestep ECS time series (`mean(C·A·I·F)`). Both are correct but differ by Jensen's inequality in the third decimal. v5.1 reconciles the ECS row of `effect_size_panel.csv` to the time-series convention so it agrees with the abstract, Table `t:multi_seed`, and §4.6 of the paper. The other four rows (cooperation, autonomy, integrity, fairness) are componentwise means and are unaffected.
 
 ---
 
@@ -111,6 +127,7 @@ Delivered narratives are prefixed by a tag that reflects governance mode:
 | `naive` | Simple heuristic filtering; blocks only the most extreme violations |
 | `unconstrained` | No filtering; highest-utility policy wins regardless of claims or theme |
 
+
 ---
 
 ## Experiments
@@ -151,6 +168,13 @@ Five backbones run on both compiler and agents: `Llama-3.3-70B-Instruct`, `Llama
 #### R5-B — Cross-Backbone Heterogeneous
 Five compiler→agent pairs cross Llama-70B with each non-Llama backbone in both directions. Verifies the constitutional filter does not depend on coordinator and agent population sharing alignment priors.
 
+### Scale spot-check (v4.1 — `gcge_nebius_v4_1.ipynb`)
+
+v4.1 is identical to v4 through R1–R5; it adds a single new section (R6) that runs the only further simulation introduced in the round-2 reviewer response.
+
+#### R6 — Scale Spot-Check at N=100
+Single-seed governed-vs.-unconstrained replication of Experiment 1 at *N*=100, with everything else held at the v4 baseline (scale-free *m*=3, 50 time steps, adversarial *p*<sub>viol</sub>=0.65, seed = 42, Llama-3.3-70B-Instruct on both sides). Outputs are written under `data_v5_1/scale_n100/` (one directory per condition) plus a `scale_n100_summary.csv` aggregate and a `scale_n100_comparison.{png,pdf}` overlay against the *N*=30 five-seed means logged by R1.
+
 ### Reviewer-response analyses (v5 — `gcge_nebius_v5.ipynb`)
 
 v5 ingests the five-seed v4 components (`components_last20.csv`) and runs three purely analytical passes. No simulations are re-executed.
@@ -163,6 +187,16 @@ Reports raw mean differences with bootstrap 95 % CIs, Cliff's δ, Cohen's *d*, a
 
 #### A3 — Governance-layer latency micro-benchmark
 Times the constitutional-selection code in isolation (`latency_benchmark.json`). The selector is a stateless set of hard rules plus a single scalar utility evaluation with no LLM call, so its cost is microsecond-order and dominated entirely by the surrounding LLM calls in any realistic deployment.
+
+### Reviewer-response extensions (v5.1 — `gcge_nebius_v5_12.ipynb`)
+
+v5.1 is identical to v5 through A1–A3 with two changes: (i) the ECS row of A2 is reconciled to the mean-of-products convention used everywhere else in the paper (see the v5.1 summary above), and (ii) the notebook adds a fourth, self-contained cell that runs the two further analyses introduced in the round-2 reviewer response. These analyses operate on the same kind of synthetic adversarial candidate pools used in the v5 latency benchmark, so no new LLM calls are required.
+
+#### E — Constraint-threshold sensitivity sweep
+Sweeps the intensity ceiling τ ∈ {0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95} on 2000 synthetic adversarial pools (six candidates per pool, *p*<sub>viol</sub>=0.65), holding the claims and theme gates fixed. Outputs `threshold_sweep.csv` (one row per τ with rejection rate, selected integrity, selected intensity, selected risk, and MISLEADING pass-through) and `threshold_sweep.{png,pdf}`.
+
+#### F — External governance baselines
+Compares the GCGE governed selector against four further selection mechanisms on the same 2000 synthetic adversarial pools: naive (hard-constraint filter only), Constitutional-AI-style critique-and-revise, LlamaGuard-style safety-classifier best-of-*N*, and unconstrained. Outputs `external_baselines.csv` (one row per method with mean integrity, intensity, manipulation risk, MISLEADING/FEAR/BURST selection rates) and `external_baselines.{png,pdf}`.
 
 ---
 
@@ -252,6 +286,10 @@ Times the constitutional-selection code in isolation (`latency_benchmark.json`).
             ├── hetero_backbone_summary.csv
             └── hetero_backbone_summary.png
 │
+│   ── v4.1 (scale spot-check, R6) ──
+├── gcge_nebius_v4_1.ipynb          # extended notebook (v4 + R6 N=100 spot-check)
+│                                   # New simulation outputs land in data_v5_1/scale_n100/ (see below).
+│
 │   ── v5 (additional analysis layer, no new model calls) ──
 ├── gcge_nebius_v5.ipynb            # analysis notebook (A1 ablation + A2 effect sizes + A3 latency)
 └── data_v5/
@@ -260,15 +298,37 @@ Times the constitutional-selection code in isolation (`latency_benchmark.json`).
     ├── ablation_formulations.{png,pdf}  # A1: bar chart of ECS by condition × formulation
     ├── ablation_graded_integrity.{png,pdf}   # A1: governance gap vs δ
     ├── effect_size_panel.csv            # A2: raw diff, bootstrap CI, Cohen's d, Glass's Δ, Cliff's δ
+    │                                    #     (ECS row reconciled to mean-of-products in v5.1)
     ├── effect_size_panel.{png,pdf}      # A2: visual panel
     └── latency_benchmark.json           # A3: n_calls, mean/median/p95/p99 µs, throughput, full-run cost
+│
+│   ── v5.1 (threshold sweep, external baselines, scale data) ──
+├── gcge_nebius_v5_12.ipynb         # extended notebook (v5 + ECS mean-of-products fix + E threshold + F baselines)
+└── data_v5_1/
+    ├── threshold_sweep.csv              # E: τ vs (rejection rate, sel integrity/intensity/risk, MISL pass-through)
+    ├── threshold_sweep.{png,pdf}        # E: plateau + rejection-rate curve
+    ├── external_baselines.csv           # F: per-method (integrity, intensity, risk, % MISL/FEAR/BURST)
+    ├── external_baselines.{png,pdf}     # F: integrity / risk / BURST comparison
+    └── scale_n100/                      # R6 N=100 spot-check (produced by gcge_nebius_v4_1.ipynb)
+        ├── governed-N100/
+        │   ├── timeseries.csv
+        │   ├── policy_log.csv
+        │   ├── agents.csv
+        │   └── config.json
+        ├── unconstrained-N100/
+        │   ├── timeseries.csv
+        │   ├── policy_log.csv
+        │   ├── agents.csv
+        │   └── config.json
+        ├── scale_n100_summary.csv       # last-20 averages per condition
+        └── scale_n100_comparison.{png,pdf}   # N=100 trajectories overlaid on N=30 5-seed means
 ```
 
 ---
 
 ## Generated Outputs
 
-The per-run schema is identical across v3 and v4 (every run directory under `results/`, `data_v4/v3/`, and any v4 sweep contains the same four files).
+The per-run schema is identical across v3, v4, and v4.1 (every run directory under `results/`, `data_v4/v3/`, any v4 sweep, and the v4.1 R6 directories under `data_v5_1/scale_n100/` contains the same four files).
 
 ### Per-Run Files
 
@@ -355,19 +415,37 @@ In addition to per-run directories, each v4 sweep produces aggregate CSV/PNG fil
 
 The v5 notebook reads the five-seed components logged by R1 and writes its outputs into `data_v5/`. No per-run subdirectories exist — v5 produces tables and figures, not simulation traces.
 
-**`components_last20.csv`** — input table: one row per (condition × seed) with last-20 averages of cooperation `C`, autonomy `A`, integrity `I`, and fairness `F`. Sourced from `data_v4/v4/multi_seed/*/timeseries.csv`; loaded by v5 and held fixed across all ablation passes.
+**`components_last20.csv`** — input table: one row per (condition × seed) with last-20 averages of cooperation `C`, autonomy `A`, integrity `I`, and fairness `F`. Sourced from `data_v4/v4/multi_seed/*/timeseries.csv`; loaded by v5 and held fixed across all ablation passes. v5.1 additionally records a per-seed last-20 mean of the per-timestep ECS time series in a new `ECS_ts` column so that the ECS effect-size row can be computed under the same convention as the rest of the paper.
 
-**`ablation_ecs_formulations.csv`** — five rows (`governed`, `naive`, `unconstrained`, `gap_gov_unc`, `gap_gov_naive`) by nine columns covering the four formulations (`mult`, `add`, `wadd`, `noI`) and the graded-δ sweep at δ ∈ {0.0, 0.1, 0.2, 0.3, 0.5}. The `gap_gov_naive` row is ≈ −0.004 across every formulation, confirming formulation-invariance of the load-bearing component.
+**`ablation_ecs_formulations.csv`** — five rows (`governed`, `naive`, `unconstrained`, `gap_gov_unc`, `gap_gov_naive`) by nine columns covering the four formulations (`mult`, `add`, `wadd`, `noI`) and the graded-δ sweep at δ ∈ {0.0, 0.1, 0.2, 0.3, 0.5}. The `gap_gov_naive` row is ≈ −0.004 across every formulation, confirming formulation-invariance of the load-bearing component. All columns use the product-of-means convention so the four formulations are like-for-like comparable.
 
 **`ablation_formulations.{png,pdf}`** — grouped bar chart: governed / naive / unconstrained ECS under the four formulations.
 
 **`ablation_graded_integrity.{png,pdf}`** — line plot of the governance gap Δ ECS as a continuous function of the integrity penalty δ assigned to MISLEADING claims.
 
-**`effect_size_panel.csv`** — one row per metric (`C`, `A`, `I`, `F`, `ECS`) with `mean_gov`, `mean_unc`, `raw_diff`, bootstrap `ci_lo` / `ci_hi`, `cohen_d`, `glass_delta`, and `cliffs_delta`.
+**`effect_size_panel.csv`** — one row per metric (`C`, `A`, `I`, `F`, `ECS`) with `mean_gov`, `mean_unc`, `raw_diff`, bootstrap `ci_lo` / `ci_hi`, `cohen_d`, `glass_delta`, and `cliffs_delta`. *Note (v5.1):* the ECS row uses the mean-of-products convention (per-timestep ECS averaged over last 20 steps) so that it agrees with the abstract, Table `t:multi_seed`, and §4.6 of the paper. The four componentwise rows (`C`, `A`, `I`, `F`) are unaffected and unchanged from v5.
 
 **`effect_size_panel.{png,pdf}`** — visual rendering of the effect-size panel.
 
 **`latency_benchmark.json`** — single JSON object: `n_calls`, `mean_us`, `median_us`, `p95_us`, `p99_us`, `throughput_per_s`, and `full_run_10calls_us`. Measured on the exact governance-selection code, in isolation from the LLM pipeline.
+
+### v5.1 Analysis Files (`data_v5_1/`)
+
+The v5.1 outputs are placed in a separate `data_v5_1/` directory so the round-2 deliverables are easy to inspect at a glance without mixing them with the original v5 files.
+
+**`threshold_sweep.csv`** — one row per τ ∈ {0.60, 0.65, …, 0.95}, columns `tau`, `rej_rate`, `sel_integrity`, `sel_intensity`, `sel_risk`, `misleading_pass`. Selected integrity is identically 1.000 and MISLEADING pass-through identically 0.0 across the entire sweep; the rejection rate decays smoothly from 79.8% at τ=0.60 to 26.3% at τ=0.95.
+
+**`threshold_sweep.{png,pdf}`** — two-panel figure. Left: selected-policy integrity and MISLEADING pass-through (both flat at the safety floor across the sweep). Right: candidate rejection rate and selected intensity (the only quantities that respond to τ). The paper operating range τ ∈ [0.75, 0.85] is shaded.
+
+**`external_baselines.csv`** — one row per method (`governed (this work)`, `naive (hard filter)`, `critique-revise (CAI-style)`, `safety-classifier (LG-style)`, `unconstrained`), columns `mean_integrity`, `mean_intensity`, `mean_risk`, `pct_misleading`, `pct_fear`, `pct_burst`, `n_pools`. All four governance-enabled methods hit `mean_integrity = 1.000` and `pct_misleading = 0.0`; they separate cleanly on secondary safety dimensions.
+
+**`external_baselines.{png,pdf}`** — three-panel comparison figure. Left: integrity floor (1.000 for the four governance-enabled selectors; 0.171 for unconstrained). Centre: mean manipulation risk. Right: % BURST timing in selected policy. The safety-classifier in particular admits 65% BURST policies that the GCGE soft scorer rejects.
+
+**`scale_n100/scale_n100_summary.csv`** — two rows (`governed`, `unconstrained`) with last-20 averages of cooperation, ECS, autonomy, integrity, fairness, and backlash at *N*=100. Generated by `gcge_nebius_v4_1.ipynb` R6.
+
+**`scale_n100/scale_n100_comparison.{png,pdf}`** — two-panel overlay. Solid lines: *N*=100 trajectories for governed (green) and unconstrained (red). Dashed lines: *N*=30 five-seed means from `data_v4/v4/multi_seed/`. The *N*=100 curves track the *N*=30 baseline almost exactly on both cooperation and ECS.
+
+**`scale_n100/{governed,unconstrained}-N100/`** — per-run directories (same four-file schema as v3/v4) for the two *N*=100 conditions, allowing the spot-check to be re-aggregated or re-plotted from raw traces if needed.
 
 ### Root-Level Figures (v3 only — v4 equivalents are inside their sweep directories)
 
@@ -404,6 +482,15 @@ ECS = cooperation × autonomy × integrity × fairness
 
 The multiplicative form ensures that a collapse in any single component — even if raw cooperation is maintained — registers as a system-level failure. This is the primary differentiator between the governance conditions: the unconstrained mode may match or exceed the governed mode on raw cooperation, but cannot match it on ECS because integrity and autonomy erode under manipulative policies.
 
+### Aggregation conventions
+
+Two arithmetically distinct ways of summarising per-seed ECS exist, both internally valid:
+
+- **Mean-of-products** (the time-series convention): for each seed, compute ECS at every time step as `C_t · A_t · I_t · F_t`, then take the last-20 mean. This is what the paper reports in the abstract, in Table `t:multi_seed` (multi-seed), in §4.6, in Table `t:effect` (effect-size panel), and in the *N*=100 spot-check. It is also what `data_v4/v4/multi_seed/*/timeseries.csv` logs in the `ecs` column. From v5.1 onward, the ECS row of `data_v5/effect_size_panel.csv` is computed under this convention so the panel agrees with the rest of the paper.
+- **Product-of-means** (the formulation-ablation convention): for each seed, take the last-20 mean of each component separately, then form `mean(C) · mean(A) · mean(I) · mean(F)`. This is what `data_v5/ablation_ecs_formulations.csv` uses, so that the four alternative ECS formulations (multiplicative, additive, weighted-additive, integrity-removed) and the graded-δ sweep are like-for-like comparable as functions of the same per-seed component means.
+
+By Jensen's inequality applied to a product of correlated bounded variables, the two conventions agree to within ≈ 0.001 on this data. The paper reports `ΔECS = +0.152` (mean-of-products) in the multi-seed table and the effect-size panel, and `+0.153` (product-of-means) in the formulation-ablation table; both are correct under their respective conventions.
+
 ---
 
 ## Setup
@@ -414,7 +501,7 @@ The multiplicative form ensures that a collapse in any single component — even
 pip install openai networkx tqdm matplotlib pandas numpy scipy
 ```
 
-`scipy` is required for the v4 notebook (bootstrap and Mann–Whitney *U*); the v3 notebook does not depend on it. v5 uses only `pandas`, `numpy`, `matplotlib`, and `scipy`, and makes no LLM calls, so an API key is not required for v5.
+`scipy` is required for the v4 and v4.1 notebooks (bootstrap and Mann–Whitney *U*); the v3 notebook does not depend on it. v5 and v5.1 use only `pandas`, `numpy`, `matplotlib`, and `scipy`, and make no LLM calls, so an API key is not required for the analysis layers.
 
 ### API Key
 
@@ -422,7 +509,7 @@ pip install openai networkx tqdm matplotlib pandas numpy scipy
 export NEBIUS_API_KEY="your_key_here"
 ```
 
-Or set it via Google Colab Secrets (`NEBIUS_API_KEY`). Both notebooks use two separate `NebiusLLM` instances with independent call tracking:
+Or set it via Google Colab Secrets (`NEBIUS_API_KEY`). The simulation notebooks (v3, v4, v4.1) use two separate `NebiusLLM` instances with independent call tracking:
 
 - **Compiler** (`role="compiler"`, temp = 0.25, max_tokens = 400) — policy generation
 - **Agent** (`role="agent"`, temp = 0.30, max_tokens = 250) — narrative shift evaluation
@@ -441,7 +528,13 @@ Execute all cells in order.
 
 - `gcge_nebius_v3.ipynb` runs the four core experiments sequentially from the orchestration cell. Outputs are written to `/content/outputs/paper5_v3/` (Colab) or the working directory.
 - `gcge_nebius_v4.ipynb` first re-runs Experiments 1–4 (writing to `paper5_v4/v3/`), then proceeds to R1–R5 (writing to `paper5_v4/v4/<sweep_name>/`). The v4 notebook is *additive* with respect to v3: if you only need the core experiments, run v3.
-- `gcge_nebius_v5.ipynb` is an additional analysis layer. It reads `data_v4/v4/multi_seed/*/timeseries.csv` for the per-component last-20 averages and writes its outputs to `data_v5/`. Runs in seconds on CPU; no API key required.
+- `gcge_nebius_v4_1.ipynb` is identical to v4 through R1–R5 and adds an R6 *N*=100 scale spot-check. Outputs of R6 are written to `data_v5_1/scale_n100/`. The R6 cell can be executed in isolation after R1 has populated `data_v4/v4/multi_seed/` (R6 reads the multi-seed means to overlay them on the *N*=100 trajectories).
+- `gcge_nebius_v5.ipynb` is an analysis layer. It reads `data_v4/v4/multi_seed/*/timeseries.csv` for the per-component last-20 averages and writes its outputs to `data_v5/`. Runs in seconds on CPU; no API key required.
+- `gcge_nebius_v5_12.ipynb` is the v5.1 extended analysis layer. Cells 1–2 are the patched v5 (mean-of-products ECS row); cell 4 is the round-2 extension that runs the threshold sweep (E) and the external-baselines comparison (F) on synthetic adversarial pools, writing to `data_v5_1/`. By default the extended cell respects the `GCGE_V5_OUT` environment variable; set it to `data_v5_1` to land outputs in the round-2 directory:
+
+  ```bash
+  GCGE_V5_OUT=data_v5_1 jupyter nbconvert --execute --inplace gcge_nebius_v5_12.ipynb
+  ```
 
 ---
 
@@ -465,7 +558,9 @@ Key parameters in `GCGEConfig` (identical between v3 and v4):
 | `state_noise` | 0.10 | Gaussian noise on state snapshots fed to the compiler LLM |
 | `seed` | 42 | Random seed for reproducibility |
 
-The v4 sweeps override these defaults in tightly scoped ways — for instance, R2 varies only `topo` and `seed`, R3 varies one parameter at a time, R5 varies the LLM backbone strings only — keeping all unmentioned parameters at the table defaults so each sweep result remains directly comparable to the v3 baseline.
+The v4 sweeps override these defaults in tightly scoped ways — for instance, R2 varies only `topo` and `seed`, R3 varies one parameter at a time, R5 varies the LLM backbone strings only, and R6 (v4.1) varies only `n_agents` (30 → 100) — keeping all unmentioned parameters at the table defaults so each sweep result remains directly comparable to the v3 baseline.
+
+The v5.1 synthetic-pool analyses (E threshold sweep, F external baselines) operate on candidate pools that mirror the v4 stress-test generator (`make_stress`, six candidates per pool, violation probability `pv = 0.65`). The hard-constraint thresholds these analyses sweep against — `max_intensity`, `forbid_claims`, `forbid_themes`, and the soft-scorer penalties — are exactly the values used in the simulation notebooks (`max_intensity = 0.80`, forbid `{EXAGGERATED, MISLEADING}` claims and `{FEAR}` themes).
 
 ---
 

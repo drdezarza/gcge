@@ -1,0 +1,6 @@
+method,mean_integrity,mean_intensity,mean_risk,pct_misleading,pct_fear,pct_burst,n_pools
+governed (this work),1.0,0.7,0.0,0.0,0.0,0.0,2000
+naive (hard filter),1.0,0.8,0.3,0.0,0.0,0.0,2000
+critique-revise (CAI-style),1.0,0.683,0.081,0.0,0.0,8.2,2000
+safety-classifier (LG-style),1.0,0.852,0.651,0.0,0.0,65.0,2000
+unconstrained,0.171,0.931,2.491,63.3,63.3,96.0,2000
